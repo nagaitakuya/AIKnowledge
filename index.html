@@ -1,1 +1,598 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Evolution Hub - AIの進化と未来を学ぶ</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .quiz-option {
+            transition: all 0.3s ease;
+        }
+        .quiz-option:hover {
+            background: #f3f4f6;
+            transform: scale(1.02);
+        }
+        .quiz-option.correct {
+            background: #dcfce7;
+            border-color: #22c55e;
+        }
+        .quiz-option.incorrect {
+            background: #fee2e2;
+            border-color: #ef4444;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div id="root"></div>
 
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Navigation Component
+        const Navigation = ({ currentSection, setCurrentSection }) => {
+            const sections = [
+                { id: 'home', name: 'ホーム', icon: 'fas fa-home' },
+                { id: 'history', name: 'AIの歴史', icon: 'fas fa-clock' },
+                { id: 'types', name: 'AIの種類', icon: 'fas fa-brain' },
+                { id: 'genai', name: '生成AI', icon: 'fas fa-magic' },
+                { id: 'agi-asi', name: 'AGI・ASI', icon: 'fas fa-rocket' },
+                { id: 'quiz', name: 'クイズ', icon: 'fas fa-question-circle' }
+            ];
+
+            return (
+                <nav className="bg-white shadow-lg sticky top-0 z-50">
+                    <div className="max-w-7xl mx-auto px-4">
+                        <div className="flex justify-between items-center py-4">
+                            <div className="flex items-center space-x-2">
+                                <i className="fas fa-robot text-2xl text-indigo-600"></i>
+                                <h1 className="text-xl font-bold text-gray-800">AI Evolution Hub</h1>
+                            </div>
+                            <div className="hidden md:flex space-x-6">
+                                {sections.map(section => (
+                                    <button
+                                        key={section.id}
+                                        onClick={() => setCurrentSection(section.id)}
+                                        className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors ${
+                                            currentSection === section.id
+                                                ? 'bg-indigo-100 text-indigo-700'
+                                                : 'text-gray-600 hover:text-indigo-600'
+                                        }`}
+                                    >
+                                        <i className={section.icon}></i>
+                                        <span>{section.name}</span>
+                                    </button>
+                                ))}
+                            </div>
+                            <div className="md:hidden">
+                                <button className="text-gray-600">
+                                    <i className="fas fa-bars text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            );
+        };
+
+        // Home Component
+        const Home = ({ setCurrentSection }) => {
+            return (
+                <div className="fade-in">
+                    <section className="gradient-bg text-white py-20">
+                        <div className="max-w-4xl mx-auto px-4 text-center">
+                            <h1 className="text-5xl font-bold mb-6">AIの進化と未来へようこそ</h1>
+                            <p className="text-xl mb-8 opacity-90">
+                                人工知能の歴史から最新の生成AI、そして未来のAGI・ASIまで、
+                                わかりやすく学べるプラットフォームです。
+                            </p>
+                            <button
+                                onClick={() => setCurrentSection('history')}
+                                className="bg-white text-indigo-600 px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
+                            >
+                                学習を始める <i className="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </section>
+
+                    <section className="py-16">
+                        <div className="max-w-6xl mx-auto px-4">
+                            <h2 className="text-3xl font-bold text-center mb-12 text-gray-800">学習コンテンツ</h2>
+                            <div className="grid md:grid-cols-3 gap-8">
+                                {[
+                                    { id: 'history', title: 'AIの歴史', desc: '1950年代から現代まで', icon: 'fas fa-clock', color: 'bg-blue-500' },
+                                    { id: 'types', title: 'AIの種類', desc: '弱いAIから強いAIまで', icon: 'fas fa-brain', color: 'bg-green-500' },
+                                    { id: 'genai', title: '生成AI', desc: 'GPTや画像生成の仕組み', icon: 'fas fa-magic', color: 'bg-purple-500' },
+                                    { id: 'agi-asi', title: 'AGI・ASI', desc: '汎用知能と超知能', icon: 'fas fa-rocket', color: 'bg-red-500' },
+                                    { id: 'quiz', title: 'クイズ', desc: '理解度をチェック', icon: 'fas fa-question-circle', color: 'bg-orange-500' }
+                                ].map(item => (
+                                    <div
+                                        key={item.id}
+                                        className="bg-white rounded-lg shadow-md card-hover cursor-pointer"
+                                        onClick={() => setCurrentSection(item.id)}
+                                    >
+                                        <div className={`${item.color} text-white p-6 rounded-t-lg`}>
+                                            <i className={`${item.icon} text-3xl mb-4`}></i>
+                                            <h3 className="text-xl font-semibold">{item.title}</h3>
+                                        </div>
+                                        <div className="p-6">
+                                            <p className="text-gray-600">{item.desc}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            );
+        };
+
+        // History Component
+        const History = () => {
+            const timelineData = [
+                { year: '1950', event: 'チューリングテスト', desc: 'アラン・チューリングが機械の知能を測定するテストを提案' },
+                { year: '1956', event: 'ダートマス会議', desc: '"人工知能"という用語が初めて使用された歴史的な会議' },
+                { year: '1980年代', event: 'エキスパートシステム', desc: '専門知識をコンピュータに組み込んだシステムが実用化' },
+                { year: '2010年代', event: 'ディープラーニング', desc: '深層学習の発展により、AIブームが再燃' },
+                { year: '2020年代', event: '生成AI革命', desc: 'ChatGPTなどの大規模言語モデルが登場し、AI民主化が進む' }
+            ];
+
+            return (
+                <div className="fade-in max-w-4xl mx-auto px-4 py-8">
+                    <h2 className="text-3xl font-bold mb-8 text-center text-gray-800">AIの歴史と進化</h2>
+                    <div className="space-y-8">
+                        {timelineData.map((item, index) => (
+                            <div key={index} className="flex items-start space-x-4">
+                                <div className="flex-shrink-0 w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center">
+                                    <span className="text-indigo-600 font-bold text-sm">{item.year}</span>
+                                </div>
+                                <div className="bg-white rounded-lg shadow-md p-6 flex-1">
+                                    <h3 className="text-xl font-semibold mb-2 text-gray-800">{item.event}</h3>
+                                    <p className="text-gray-600">{item.desc}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        // Types Component
+        const Types = () => {
+            return (
+                <div className="fade-in max-w-6xl mx-auto px-4 py-8">
+                    <h2 className="text-3xl font-bold mb-8 text-center text-gray-800">AIの種類と仕組み</h2>
+                    <div className="grid md:grid-cols-2 gap-8">
+                        <div className="bg-white rounded-lg shadow-md p-6">
+                            <h3 className="text-xl font-semibold mb-4 text-blue-600">弱いAI (Narrow AI)</h3>
+                            <ul className="space-y-2 text-gray-600">
+                                <li>• 特定のタスクに特化したAI</li>
+                                <li>• 現在実用化されているAIの大部分</li>
+                                <li>• 例：画像認識、音声認識、推薦システム</li>
+                            </ul>
+                        </div>
+                        <div className="bg-white rounded-lg shadow-md p-6">
+                            <h3 className="text-xl font-semibold mb-4 text-green-600">強いAI (AGI)</h3>
+                            <ul className="space-y-2 text-gray-600">
+                                <li>• 人間と同等の汎用的な知能</li>
+                                <li>• あらゆるタスクを学習・実行可能</li>
+                                <li>• まだ実現されていない未来の技術</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div className="mt-12">
+                        <h3 className="text-2xl font-semibold mb-6 text-center text-gray-800">学習の種類</h3>
+                        <div className="grid md:grid-cols-3 gap-6">
+                            {[
+                                { title: '教師あり学習', desc: '正解データを使って学習', icon: 'fas fa-chalkboard-teacher', color: 'bg-blue-500' },
+                                { title: '教師なし学習', desc: 'データのパターンを自動発見', icon: 'fas fa-search', color: 'bg-green-500' },
+                                { title: '強化学習', desc: '試行錯誤で最適な行動を学習', icon: 'fas fa-trophy', color: 'bg-purple-500' }
+                            ].map((item, index) => (
+                                <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
+                                    <div className={`${item.color} text-white p-4 text-center`}>
+                                        <i className={`${item.icon} text-2xl mb-2`}></i>
+                                        <h4 className="font-semibold">{item.title}</h4>
+                                    </div>
+                                    <div className="p-4">
+                                        <p className="text-gray-600 text-sm">{item.desc}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // GenAI Component
+        const GenAI = () => {
+            return (
+                <div className="fade-in max-w-6xl mx-auto px-4 py-8">
+                    <h2 className="text-3xl font-bold mb-8 text-center text-gray-800">生成AIの仕組み</h2>
+                    
+                    <div className="bg-white rounded-lg shadow-md p-8 mb-8">
+                        <h3 className="text-2xl font-semibold mb-4 text-indigo-600">GPTとは？</h3>
+                        <p className="text-gray-600 mb-4">
+                            GPT（Generative Pre-trained Transformer）は、大量のテキストデータで事前学習された言語モデルです。
+                            Transformerアーキテクチャを使用し、文脈を理解して自然な文章を生成できます。
+                        </p>
+                        <div className="bg-gray-50 p-4 rounded-lg">
+                            <h4 className="font-semibold mb-2">Transformerの特徴</h4>
+                            <ul className="text-sm text-gray-600 space-y-1">
+                                <li>• 注意機構（Attention）で文脈を理解</li>
+                                <li>• 並列処理により高速な学習が可能</li>
+                                <li>• 長い文章でも一貫性を保持</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-8">
+                        <div className="bg-white rounded-lg shadow-md p-6">
+                            <h3 className="text-xl font-semibold mb-4 text-purple-600">テキスト生成</h3>
+                            <ul className="space-y-2 text-gray-600">
+                                <li>• 記事・小説の執筆</li>
+                                <li>• コード生成</li>
+                                <li>• 翻訳・要約</li>
+                                <li>• 対話・質問応答</li>
+                            </ul>
+                        </div>
+                        <div className="bg-white rounded-lg shadow-md p-6">
+                            <h3 className="text-xl font-semibold mb-4 text-pink-600">画像生成</h3>
+                            <ul className="space-y-2 text-gray-600">
+                                <li>• Stable Diffusion</li>
+                                <li>• DALL-E</li>
+                                <li>• Midjourney</li>
+                                <li>• テキストから画像を生成</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div className="mt-8 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg p-6">
+                        <h3 className="text-xl font-semibold mb-4">生成AIの活用例</h3>
+                        <div className="grid md:grid-cols-4 gap-4">
+                            {['文章', '画像', '動画', '音楽', 'コード', '3D', '音声', 'デザイン'].map((item, index) => (
+                                <div key={index} className="bg-white bg-opacity-20 rounded-lg p-3 text-center">
+                                    <span className="font-medium">{item}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // AGI-ASI Component
+        const AGIASI = () => {
+            return (
+                <div className="fade-in max-w-6xl mx-auto px-4 py-8">
+                    <h2 className="text-3xl font-bold mb-8 text-center text-gray-800">AGIとASIとは何か？</h2>
+                    
+                    <div className="grid md:grid-cols-2 gap-8 mb-8">
+                        <div className="bg-white rounded-lg shadow-md p-6">
+                            <div className="flex items-center mb-4">
+                                <i className="fas fa-brain text-2xl text-blue-600 mr-3"></i>
+                                <h3 className="text-xl font-semibold text-blue-600">AGI（汎用人工知能）</h3>
+                            </div>
+                            <p className="text-gray-600 mb-4">
+                                人間と同等レベルの知能を持つAI。あらゆるタスクを人間と同じように学習・実行できる。
+                            </p>
+                            <ul className="space-y-2 text-gray-600">
+                                <li>• 推論・学習・創造性を併せ持つ</li>
+                                <li>• 異なる分野間で知識を転移</li>
+                                <li>• 自己改善能力を持つ</li>
+                            </ul>
+                        </div>
+                        
+                        <div className="bg-white rounded-lg shadow-md p-6">
+                            <div className="flex items-center mb-4">
+                                <i className="fas fa-rocket text-2xl text-red-600 mr-3"></i>
+                                <h3 className="text-xl font-semibold text-red-600">ASI（超知能）</h3>
+                            </div>
+                            <p className="text-gray-600 mb-4">
+                                人類を遥かに超える知性を持つAI。科学・技術・芸術のあらゆる分野で人間を凌駕する。
+                            </p>
+                            <ul className="space-y-2 text-gray-600">
+                                <li>• 人間の理解を超える思考</li>
+                                <li>• 急速な自己改善</li>
+                                <li>• 未知の問題解決能力</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-lg p-6 mb-8">
+                        <h3 className="text-xl font-semibold mb-4">シンギュラリティ（技術的特異点）</h3>
+                        <p className="mb-4">
+                            AIが人間の知能を超え、予測不可能な速度で技術進歩が加速する転換点。
+                            多くの専門家が2030年代〜2040年代に到来すると予測している。
+                        </p>
+                        <div className="bg-white bg-opacity-20 rounded-lg p-4">
+                            <h4 className="font-semibold mb-2">可能性とリスク</h4>
+                            <div className="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <h5 className="font-medium text-green-200">ポジティブな可能性</h5>
+                                    <ul className="text-sm space-y-1">
+                                        <li>• 医療・科学の飛躍的進歩</li>
+                                        <li>• 貧困・環境問題の解決</li>
+                                        <li>• 人間の能力拡張</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h5 className="font-medium text-red-200">潜在的リスク</h5>
+                                    <ul className="text-sm space-y-1">
+                                        <li>• 制御不能な技術発展</li>
+                                        <li>• 雇用の大幅な変化</li>
+                                        <li>• 社会構造の根本的変化</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // Quiz Component
+        const Quiz = () => {
+            const [currentQuestion, setCurrentQuestion] = useState(0);
+            const [score, setScore] = useState(0);
+            const [showResult, setShowResult] = useState(false);
+            const [selectedAnswer, setSelectedAnswer] = useState(null);
+            const [showExplanation, setShowExplanation] = useState(false);
+
+            const questions = [
+                {
+                    question: "チューリングテストが提案されたのはいつですか？",
+                    options: ["1945年", "1950年", "1956年", "1960年"],
+                    correct: 1,
+                    explanation: "アラン・チューリングが1950年に「Computing Machinery and Intelligence」で提案しました。"
+                },
+                {
+                    question: "「人工知能」という用語が初めて使われた会議は？",
+                    options: ["MIT会議", "ダートマス会議", "スタンフォード会議", "ハーバード会議"],
+                    correct: 1,
+                    explanation: "1956年のダートマス会議で初めて「人工知能」という用語が使用されました。"
+                },
+                {
+                    question: "現在実用化されているAIの大部分は何ですか？",
+                    options: ["強いAI", "弱いAI", "AGI", "ASI"],
+                    correct: 1,
+                    explanation: "現在のAIは特定のタスクに特化した「弱いAI」がほとんどです。"
+                },
+                {
+                    question: "GPTの「T」は何を表していますか？",
+                    options: ["Technology", "Transformer", "Training", "Text"],
+                    correct: 1,
+                    explanation: "GPTは「Generative Pre-trained Transformer」の略です。"
+                },
+                {
+                    question: "教師あり学習とは何ですか？",
+                    options: ["正解データを使って学習", "データのパターンを自動発見", "試行錯誤で学習", "人間が直接指導"],
+                    correct: 0,
+                    explanation: "教師あり学習は正解ラベル付きのデータを使って学習する手法です。"
+                },
+                {
+                    question: "AGIとは何の略ですか？",
+                    options: ["Advanced General Intelligence", "Artificial General Intelligence", "Automated General Intelligence", "Applied General Intelligence"],
+                    correct: 1,
+                    explanation: "AGIは「Artificial General Intelligence（汎用人工知能）」の略です。"
+                },
+                {
+                    question: "シンギュラリティとは何ですか？",
+                    options: ["AIの誕生", "技術的特異点", "量子コンピュータ", "宇宙現象"],
+                    correct: 1,
+                    explanation: "シンギュラリティは技術的特異点と呼ばれ、AIが人間の知能を超える転換点です。"
+                },
+                {
+                    question: "Stable Diffusionは何を生成するAIですか？",
+                    options: ["テキスト", "音楽", "画像", "動画"],
+                    correct: 2,
+                    explanation: "Stable Diffusionはテキストから画像を生成するAIモデルです。"
+                },
+                {
+                    question: "強化学習の特徴は何ですか？",
+                    options: ["正解データが必要", "パターン認識", "試行錯誤で学習", "人間の模倣"],
+                    correct: 2,
+                    explanation: "強化学習は報酬を最大化するために試行錯誤で最適な行動を学習します。"
+                },
+                {
+                    question: "ASIが実現した場合の特徴は？",
+                    options: ["人間と同等", "特定分野のみ", "人間を超越", "現在と同じ"],
+                    correct: 2,
+                    explanation: "ASI（超知能）は人類を遥かに超える知性を持つとされています。"
+                }
+            ];
+
+            const handleAnswer = (answerIndex) => {
+                setSelectedAnswer(answerIndex);
+                setShowExplanation(true);
+                if (answerIndex === questions[currentQuestion].correct) {
+                    setScore(score + 1);
+                }
+            };
+
+            const nextQuestion = () => {
+                if (currentQuestion < questions.length - 1) {
+                    setCurrentQuestion(currentQuestion + 1);
+                    setSelectedAnswer(null);
+                    setShowExplanation(false);
+                } else {
+                    setShowResult(true);
+                }
+            };
+
+            const resetQuiz = () => {
+                setCurrentQuestion(0);
+                setScore(0);
+                setShowResult(false);
+                setSelectedAnswer(null);
+                setShowExplanation(false);
+            };
+
+            const getScoreMessage = () => {
+                const percentage = (score / questions.length) * 100;
+                if (percentage >= 80) return "素晴らしい！AIマスターですね！🎉";
+                if (percentage >= 60) return "良い成績です！もう少しで完璧！👍";
+                if (percentage >= 40) return "まずまずの成績です。復習してみましょう！📚";
+                return "もう一度学習してからチャレンジしてみてください！💪";
+            };
+
+            if (showResult) {
+                return (
+                    <div className="fade-in max-w-2xl mx-auto px-4 py-8 text-center">
+                        <div className="bg-white rounded-lg shadow-md p-8">
+                            <i className="fas fa-trophy text-6xl text-yellow-500 mb-4"></i>
+                            <h2 className="text-3xl font-bold mb-4 text-gray-800">クイズ完了！</h2>
+                            <p className="text-2xl mb-4">
+                                スコア: <span className="font-bold text-indigo-600">{score}</span> / {questions.length}
+                            </p>
+                            <p className="text-lg mb-6 text-gray-600">{getScoreMessage()}</p>
+                            <button
+                                onClick={resetQuiz}
+                                className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
+                            >
+                                もう一度チャレンジ
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="fade-in max-w-3xl mx-auto px-4 py-8">
+                    <div className="bg-white rounded-lg shadow-md p-8">
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-2xl font-bold text-gray-800">AIクイズ</h2>
+                            <div className="text-sm text-gray-600">
+                                問題 {currentQuestion + 1} / {questions.length}
+                            </div>
+                        </div>
+                        
+                        <div className="mb-6">
+                            <div className="bg-gray-200 rounded-full h-2 mb-4">
+                                <div 
+                                    className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
+                                    style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
+                                ></div>
+                            </div>
+                        </div>
+
+                        <h3 className="text-xl mb-6 text-gray-800">{questions[currentQuestion].question}</h3>
+                        
+                        <div className="space-y-3 mb-6">
+                            {questions[currentQuestion].options.map((option, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => !showExplanation && handleAnswer(index)}
+                                    disabled={showExplanation}
+                                    className={`w-full p-4 text-left rounded-lg border-2 quiz-option ${
+                                        showExplanation
+                                            ? index === questions[currentQuestion].correct
+                                                ? 'correct'
+                                                : selectedAnswer === index
+                                                ? 'incorrect'
+                                                : 'border-gray-200'
+                                            : 'border-gray-200 hover:border-indigo-300'
+                                    }`}
+                                >
+                                    {option}
+                                    {showExplanation && index === questions[currentQuestion].correct && (
+                                        <i className="fas fa-check text-green-600 float-right"></i>
+                                    )}
+                                    {showExplanation && selectedAnswer === index && index !== questions[currentQuestion].correct && (
+                                        <i className="fas fa-times text-red-600 float-right"></i>
+                                    )}
+                                </button>
+                            ))}
+                        </div>
+
+                        {showExplanation && (
+                            <div className="bg-blue-50 p-4 rounded-lg mb-6">
+                                <h4 className="font-semibold text-blue-800 mb-2">解説</h4>
+                                <p className="text-blue-700">{questions[currentQuestion].explanation}</p>
+                            </div>
+                        )}
+
+                        {showExplanation && (
+                            <div className="text-center">
+                                <button
+                                    onClick={nextQuestion}
+                                    className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
+                                >
+                                    {currentQuestion < questions.length - 1 ? '次の問題' : '結果を見る'}
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        // Main App Component
+        const App = () => {
+            const [currentSection, setCurrentSection] = useState('home');
+
+            const renderSection = () => {
+                switch (currentSection) {
+                    case 'home':
+                        return <Home setCurrentSection={setCurrentSection} />;
+                    case 'history':
+                        return <History />;
+                    case 'types':
+                        return <Types />;
+                    case 'genai':
+                        return <GenAI />;
+                    case 'agi-asi':
+                        return <AGIASI />;
+                    case 'quiz':
+                        return <Quiz />;
+                    default:
+                        return <Home setCurrentSection={setCurrentSection} />;
+                }
+            };
+
+            return (
+                <div className="min-h-screen bg-gray-50">
+                    <Navigation currentSection={currentSection} setCurrentSection={setCurrentSection} />
+                    <main>
+                        {renderSection()}
+                    </main>
+                    <footer className="bg-gray-800 text-white py-8">
+                        <div className="max-w-4xl mx-auto px-4 text-center">
+                            <p className="mb-2">© 2024 AI Evolution Hub</p>
+                            <p className="text-gray-400 text-sm">AIの進化と未来を学ぶプラットフォーム</p>
+                        </div>
+                    </footer>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
